@@ -8,7 +8,7 @@ public class SkyBoxFetcher : MonoBehaviour
     // Replace with your API endpoint URL
     string url = "https://backend.blockadelabs.com/api/v1/imagine/myRequests";
     // Replace with your API key
-    string apiKey = "yFT96DxVwAE8YvyUuBanWD7Q6ntAsx3TLifd0GqMv005ieuYNEQBCBzyqTWl";
+    public string apiKey = "";
 
     void Start()
     {
@@ -44,22 +44,35 @@ public class SkyBoxFetcher : MonoBehaviour
             // Check if data field exists
             if (response.data != null)
             {
-                // Create an array to store the data
-                List<Data> dataArray = new List<Data>();
+                // Get the first item
+                var firstItem = response.data[0];
 
-                // Loop through each item in the data array
-                foreach (var item in response.data)
+                // Get the file URL of the first item
+                string fileUrl = firstItem.file_url;
+
+                // Download the texture
+                UnityWebRequest textureRequest = UnityWebRequestTexture.GetTexture(fileUrl);
+                yield return textureRequest.SendWebRequest();
+
+                if (textureRequest.result == UnityWebRequest.Result.ConnectionError ||
+                    textureRequest.result == UnityWebRequest.Result.ProtocolError)
                 {
-                    dataArray.Add(item);
-                    // Access individual fields like item.title, item.prompt, etc.
-                    Debug.Log("Title: " + item.title);
-                    Debug.Log("Prompt: " + item.prompt);
-                    Debug.Log("File URL: " + item.file_url);
-                    Debug.Log("-------------------");
+                    Debug.LogError("Error downloading texture: " + textureRequest.error);
                 }
+                else
+                {
+                    // Get downloaded texture
+                    Texture2D texture = DownloadHandlerTexture.GetContent(textureRequest);
 
-                // Now 'dataArray' contains all the data objects from the response
-                // You can use 'dataArray' further as needed
+                    // Create a material for the skybox
+                    Material skyboxMaterial = new Material(Shader.Find("Skybox/Panoramic"));
+
+                    // Set the texture to the skybox material
+                    skyboxMaterial.SetTexture("_MainTex", texture);
+
+                    // Apply the skybox material to the scene's skybox
+                    RenderSettings.skybox = skyboxMaterial;
+                }
             }
         }
     }
