@@ -31,7 +31,12 @@ public class Card : MonoBehaviour
         if (isInteractable)
         {
             isInteractable = false;
-            FindObjectOfType<CardManager>().OnCardSelected(transform);
+
+            if (FindObjectOfType<CardManager>())
+                FindObjectOfType<CardManager>().OnCardSelected(transform);
+            else
+                FindObjectOfType<SequenceGameManager>().OnCardSelected(transform);
+
             Debug.Log("Card clicked: " + transform.GetComponent<Card>().frontImage);  
         }
     }
