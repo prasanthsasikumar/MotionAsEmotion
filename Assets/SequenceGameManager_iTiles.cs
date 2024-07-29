@@ -1,3 +1,4 @@
+using Oculus.Interaction;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,116 +6,143 @@ using UnityEngine;
 
 public class SequenceGameManager_iTiles : MonoBehaviour
 {
+    [Header("Game Settings")]
     public Transform buttonParent;
+    public int numberOfButtons = 10;
     public int difficulty = 5;
     public float minDelay = 0.5f;
     public float maxDelay = 1.5f;
+    public float buttonYOffset = 0.07f;
+    public float buttonDiameter = 0.3f;
+
+    [Header("UI Elements")]
     public TextMeshProUGUI timeTaken;
-    public TextMeshProUGUI message;
+    public TextMeshProUGUI infoFrame;
+
+    [Header("Game Objects")]
     public BoxCollider tableCollider;
     public GameObject buttonPrefab;
+    public AudioClip winSound, loseSound;
 
-    public List<GameObject> buttons = new List<GameObject>();
+    private List<GameObject> buttons = new List<GameObject>();
     private List<GameObject> sequence = new List<GameObject>();
     private int currentSequenceIndex = 0;
     private float timer = 0f;
     private bool gameEnded = false;
 
-    void Start()
+    private void Start()
     {
         PlaceButtonsOnTable();
-        //GetButtonList();
-        //StartCoroutine(ShowSequence());
-        //StartCoroutine(Timer());
+        StartCoroutine(ShowSequence());
+        StartCoroutine(Timer());
+        gameObject.AddComponent<AudioSource>();
     }
 
-    public void PlaceButtonsOnTable()
+    private void PlaceButtonsOnTable()
     {
-        // Use the table collider to determine the table's size and place buttons accordingly under buttonParent
-        Vector3 tableSize = tableCollider.size;
-        Vector3 tableCenter = tableCollider.center;
-        float buttonDiameter = 0.3f;
-        float buffer = 0.1f; // Buffer distance around edges
+        var potentialPositions = GenerateRandomPositions();
+        ShuffleList(potentialPositions);
 
-        // Calculate the starting positions with buffer
-        Vector3 tablePosition = tableCollider.transform.position;
-        float minX = tablePosition.x + tableCenter.x - tableSize.x / 2 + buffer;
-        float maxX = tablePosition.x + tableCenter.x + tableSize.x / 2 - buffer;
-        float minZ = tablePosition.z + tableCenter.z - tableSize.z / 2 + buffer;
-        float maxZ = tablePosition.z + tableCenter.z + tableSize.z / 2 - buffer;
-        float y = tablePosition.y + tableCenter.y + tableSize.y / 2;
-
-        // Print all values
-        Debug.Log("tableSize: " + tableSize);
-        Debug.Log("tableCenter: " + tableCenter);
-        Debug.Log("tablePosition: " + tablePosition);
-        Debug.Log("minX: " + minX);
-        Debug.Log("maxX: " + maxX);
-        Debug.Log("minZ: " + minZ);
-        Debug.Log("maxZ: " + maxZ);
-        Debug.Log("y: " + y);
-
-        int numberOfCubes = 10; // Adjust this number as needed
-        HashSet<Vector3> occupiedPositions = new HashSet<Vector3>();
-
+        int numberOfCubes = Mathf.Min(numberOfButtons, potentialPositions.Count);
         for (int i = 0; i < numberOfCubes; i++)
         {
-            Vector3 buttonPosition = new Vector3();
-            bool validPosition = false;
+            Vector3 buttonPosition = potentialPositions[i];
+            GameObject button = Instantiate(buttonPrefab, buttonPosition, Quaternion.identity, buttonParent);
+            buttons.Add(button);
+            button.transform.localPosition = buttonPosition;
+            button.transform.Find("Button").GetComponent<InteractableUnityEventWrapper>().WhenSelect.AddListener(() => OnButtonSelected(button));
+        }
+    }
 
-            // Ensure unique positions
-            while (!validPosition)
+    private List<Vector3> GenerateRandomPositions()
+    {
+        var tableSize = tableCollider.bounds.size;
+        var tablePosition = tableCollider.transform.position;
+
+        float buffer = 0.1f;
+        float minX = tablePosition.x - tableSize.x / 2 + buffer;
+        float maxX = tablePosition.x + tableSize.x / 2 - buffer;
+        float minZ = tablePosition.z - tableSize.z / 2 + buffer;
+        float maxZ = tablePosition.z + tableSize.z / 2 - buffer;
+        float y = tablePosition.y + tableSize.y / 2 - buttonYOffset;
+
+        DrawTableBorder(minX, maxX, minZ, maxZ, y);
+
+        var potentialPositions = new List<Vector3>();
+        var positionSet = new HashSet<Vector3>();
+        int maxAttempts = numberOfButtons * 100;
+
+        while (potentialPositions.Count < numberOfButtons && maxAttempts > 0)
+        {
+            maxAttempts--;
+
+            Vector3 newPosition;
+            bool isValid;
+            int maxIterations = 1000;
+
+            do
             {
-                float randomX = Random.Range(minX, maxX);
-                float randomZ = Random.Range(minZ, maxZ);
-                buttonPosition = new Vector3(randomX, y, randomZ);
+                maxIterations--;
+                float x = Random.Range(minX, maxX - buttonDiameter);
+                float z = Random.Range(minZ, maxZ - buttonDiameter);
+                newPosition = new Vector3(x, y, z);
 
-                // Check if position overlaps with existing cubes
-                bool overlaps = false;
-                foreach (Vector3 pos in occupiedPositions)
+                isValid = true;
+                foreach (var existingPosition in positionSet)
                 {
-                    if (Vector3.Distance(pos, buttonPosition) < buttonDiameter)
+                    if (Vector3.Distance(newPosition, existingPosition) < buttonDiameter)
                     {
-                        overlaps = true;
+                        isValid = false;
                         break;
                     }
                 }
+            } while (!isValid && maxIterations > 0);
 
-                if (!overlaps)
-                {
-                    validPosition = true;
-                }
-            }
-
-            // Place a small cube at the buttonPosition
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            cube.transform.position = buttonPosition;
-            cube.transform.parent = buttonParent;
-
-            occupiedPositions.Add(buttonPosition);
-        }
-    }
-
-
-
-    public void GetButtonList()
-    {
-        foreach (Transform child in buttonParent)
-        {
-            if (child.gameObject.name.Contains("BigRedButton"))
+            if (isValid)
             {
-                buttons.Add(child.gameObject);
+                positionSet.Add(newPosition);
+                potentialPositions.Add(newPosition);
             }
         }
-        //SetButtonColor(buttons[2], 0.5f);
+
+        if (maxAttempts <= 0)
+        {
+            Debug.LogWarning("Reached maximum number of attempts for placing buttons.");
+        }
+
+        return potentialPositions;
     }
 
-
-    IEnumerator ShowSequence()
+    private void DrawTableBorder(float minX, float maxX, float minZ, float maxZ, float y)
     {
+        Debug.DrawLine(new Vector3(minX, y, minZ), new Vector3(minX, y, maxZ), Color.red, Mathf.Infinity);
+        Debug.DrawLine(new Vector3(minX, y, maxZ), new Vector3(maxX, y, maxZ), Color.red, Mathf.Infinity);
+        Debug.DrawLine(new Vector3(maxX, y, maxZ), new Vector3(maxX, y, minZ), Color.red, Mathf.Infinity);
+        Debug.DrawLine(new Vector3(maxX, y, minZ), new Vector3(minX, y, minZ), Color.red, Mathf.Infinity);
+    }
+
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
+    }
+
+    private IEnumerator ShowSequence()
+    {
+        yield return new WaitForSeconds(1f);
+        infoFrame.text = "Ready?";
+        yield return new WaitForSeconds(2f);
+        infoFrame.text = "Memorize the sequence!";
+        yield return new WaitForSeconds(0.5f);
+
         sequence.Clear();
-        List<int> indices = new List<int>();
+        var indices = new List<int>();
+        difficulty = Mathf.Min(difficulty, buttons.Count);
 
         for (int i = 0; i < difficulty; i++)
         {
@@ -128,13 +156,12 @@ public class SequenceGameManager_iTiles : MonoBehaviour
             sequence.Add(buttons[index]);
         }
 
-        foreach (GameObject button in buttons)
+        foreach (var button in buttons)
         {
             SetButtonColor(button, 0.5f);
-            //button.GetComponent<Button>().interactable = false;
         }
 
-        foreach (GameObject button in sequence)
+        foreach (var button in sequence)
         {
             yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
             SetButtonColor(button, 1);
@@ -142,26 +169,21 @@ public class SequenceGameManager_iTiles : MonoBehaviour
             SetButtonColor(button, 0);
         }
 
-        foreach (GameObject button in buttons)
-        {
-           // button.GetComponent<Button>().interactable = true;
-        }
-
         currentSequenceIndex = 0;
-        message.text = "Repeat the sequence!";
+        infoFrame.text = "Repeat the sequence!";
     }
 
-    void SetButtonColor(GameObject button, float value)
+    private void SetButtonColor(GameObject button, float value)
     {
-        Transform buttonMesh = button.transform.Find("Button/Visuals/ButtonVisual/Button");
+        var buttonMesh = button.transform.Find("Button/Visuals/ButtonVisual/Button");
         if (buttonMesh != null)
         {
-            MeshRenderer renderer = buttonMesh.GetComponent<MeshRenderer>();
+            var renderer = buttonMesh.GetComponent<MeshRenderer>();
             if (renderer != null && renderer.material != null)
             {
-                Material materialInstance = renderer.material;
-                materialInstance.SetFloat("_highlight", value);
-            } else
+                renderer.material.SetFloat("_highlight", value);
+            }
+            else
             {
                 Debug.LogError("Could not find the renderer or material for the button!");
             }
@@ -170,23 +192,36 @@ public class SequenceGameManager_iTiles : MonoBehaviour
 
     public void OnButtonSelected(GameObject selectedButton)
     {
+        Debug.Log("Button selected: " + selectedButton.name);
         if (sequence[currentSequenceIndex] == selectedButton)
         {
             currentSequenceIndex++;
+            SetButtonColor(selectedButton, 0.75f);
             if (currentSequenceIndex >= sequence.Count)
             {
-                gameEnded = true;
-                message.text = "You win!";
+                EndGame(true);
             }
         }
         else
         {
-            gameEnded = true;
-            message.text = "You lose!";
+            EndGame(false);
         }
     }
 
-    IEnumerator Timer()
+    private void EndGame(bool won)
+    {
+        gameEnded = true;
+        infoFrame.text = won ? "You win!" : "You lose!";
+        var audioSource = GetComponent<AudioSource>();
+        audioSource.PlayOneShot(won ? winSound : loseSound);
+
+        foreach (var button in buttons)
+        {
+            SetButtonColor(button, won ? 1 : 0);
+        }
+    }
+
+    private IEnumerator Timer()
     {
         while (!gameEnded)
         {
@@ -198,24 +233,27 @@ public class SequenceGameManager_iTiles : MonoBehaviour
 
     public void Restart()
     {
-        // Reset the timer and gameEnded flag
         timer = 0f;
         gameEnded = false;
         timeTaken.text = "";
-        message.text = "";
+        infoFrame.text = "Ready..?";
 
-        // Clear the current sequence
         sequence.Clear();
 
-        // Reset the button states
-        foreach (GameObject button in buttons)
+        foreach (var button in buttons)
         {
-           // button.GetComponent<Button>().interactable = true;
             SetButtonColor(button, 0);
         }
 
-        // Show the sequence again
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Restart();
+        }
     }
 }
