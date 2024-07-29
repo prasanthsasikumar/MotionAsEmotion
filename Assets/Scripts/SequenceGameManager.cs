@@ -135,7 +135,7 @@ public class SequenceGameManager : MonoBehaviour
         }
     }
 
-    IEnumerator FlipCard(Transform card, bool flip)
+    IEnumerator FlipCard(Transform card, bool flip, bool useHighlight=false)
     {
         float elapsedTime = 0f;
         Vector3 startRotation = card.localEulerAngles;
@@ -143,7 +143,11 @@ public class SequenceGameManager : MonoBehaviour
 
         while (elapsedTime < flipDuration)
         {
-            card.localEulerAngles = Vector3.Lerp(startRotation, endRotation, (elapsedTime / flipDuration));
+            if(useHighlight)
+                card.GetComponent<Image>().color = Color.Lerp(Color.black, Color.blue, (elapsedTime / flipDuration));
+            else
+                card.localEulerAngles = Vector3.Lerp(startRotation, endRotation, (elapsedTime / flipDuration));
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
