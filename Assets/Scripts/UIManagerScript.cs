@@ -126,4 +126,23 @@ public class UIManagerScript : MonoBehaviour
     {
         toggle.onValueChanged.AddListener(listener);
     }
+
+    public void Reset()
+    {
+        currentTry = 0;
+        frontToggle.interactable = false;
+        backToggle.interactable = true;
+        backToggle.gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = pageObjectColor;
+        backToggle.isOn = false;
+        if (timed)
+            countdownCoroutine = StartCoroutine(CountdownRoutine());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reset();
+        }
+    }
 }

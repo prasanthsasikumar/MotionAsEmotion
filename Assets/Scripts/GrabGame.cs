@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
+using Oculus.Interaction.Samples;
 
 public class GrabGame : MonoBehaviour
 {
@@ -129,11 +130,13 @@ public class GrabGame : MonoBehaviour
         if (Random.Range(0, 2) == 0)
         {
             stonePrefabLocation.transform.position = location1.transform.position;
+            stonePrefab.GetComponent<RespawnOnDrop>()._initialPosition = location1.transform.position;
             Debug.Log("Location 1");
         }
         else
         {
             stonePrefabLocation.transform.position = location2.transform.position;
+            stonePrefab.GetComponent<RespawnOnDrop>()._initialPosition = location2.transform.position;
             Debug.Log("Location 2");
         }
     }

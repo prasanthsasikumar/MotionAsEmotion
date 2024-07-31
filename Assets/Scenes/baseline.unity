@@ -1752,6 +1752,7 @@ GameObject:
   - component: {fileID: 1518140448}
   - component: {fileID: 1518140447}
   - component: {fileID: 1518140446}
+  - component: {fileID: 1518140449}
   m_Layer: 0
   m_Name: BaseLine
   m_TagString: Untagged
@@ -1903,6 +1904,19 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 9b60741c0dfed4342b134ccd64b48a2a, type: 2}
+--- !u!114 &1518140449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518140443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1bf23feec528e74aa2fc665544839a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseStreaming: 0
 --- !u!114 &1625799201 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8324145201537121375, guid: f54012181eacade4ea242c65f804720f,
