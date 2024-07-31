@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 
-public class StonePlacementManager : MonoBehaviour
+public class GrabGame : MonoBehaviour
 {
     [Header("Settings")]
     public int maxNumberOfStones = 5;

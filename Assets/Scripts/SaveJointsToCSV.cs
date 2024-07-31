@@ -11,6 +11,7 @@ public class SaveJointsToCSV : MonoBehaviour
     private List<Transform> _jointTransforms;
 
     public bool pauseStreaming = false;
+    private bool setUpCompleted = false;
 
     public enum HandType
     {
@@ -24,10 +25,11 @@ public class SaveJointsToCSV : MonoBehaviour
     private StreamWriter writer;
 
     // Start is called before the first frame update
-    void Start()
+    public void Setup()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        string filename = Time.time.ToString() + "-" + sceneName;
+        string timeString = System.DateTime.Now.ToString("HH-mm");
+        string filename = timeString + "-" + sceneName;
         string fileName = handType == HandType.Left ? filename + "-left_hand.csv" : filename + "-right_hand.csv";
         csvFilePath = Path.Combine(Application.persistentDataPath, fileName);
         HandVisual handVisual = GetComponent<HandVisual>();
@@ -45,6 +47,7 @@ public class SaveJointsToCSV : MonoBehaviour
         writer = new StreamWriter(csvFilePath);
         // Write the header
         writer.WriteLine("Timestamp,JointName,PositionX,PositionY,PositionZ,RotationX,RotationY,RotationZ,RotationW");
+        setUpCompleted = true;
     }
 
     private void SaveJointsDataToCSV()
@@ -65,7 +68,7 @@ public class SaveJointsToCSV : MonoBehaviour
 
     private void Update()
     {
-        if (pauseStreaming)
+        if (pauseStreaming || !setUpCompleted)
         {
             return;
         }

@@ -1,3 +1,4 @@
+using Oculus.Interaction;
 using System;
 using System.IO;
 using UnityEngine;
@@ -14,13 +15,14 @@ public class SaveBodyDataToCSV : MonoBehaviour
     private StreamWriter writer;
 
     public bool pauseStreaming= false;
+    private bool setUpCompleted = false;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Setup()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        string filename = Time.time.ToString() + "-" + sceneName + "-body.csv";
-        csvFilePath = Path.Combine(Application.persistentDataPath, "body.csv");
+        string timeString = System.DateTime.Now.ToString("HH-mm");
+        string filename = timeString + "-" + sceneName + "-body.csv";
+        csvFilePath = Path.Combine(Application.persistentDataPath, filename);
 
         // Find the game objects
         centerEyeAnchor = GameObject.Find("CenterEyeAnchor");
@@ -37,6 +39,20 @@ public class SaveBodyDataToCSV : MonoBehaviour
         writer = new StreamWriter(csvFilePath);
         // Write the header
         writer.WriteLine("Timestamp,ObjectName,PositionX,PositionY,PositionZ,RotationX,RotationY,RotationZ,RotationW");
+
+        HandVisual[] instances = FindObjectsOfType<HandVisual>();
+        foreach (HandVisual instance in instances)
+        { 
+            Debug.Log("Setting up SaveJointsToCSV");
+
+            if (instance.gameObject.name == "OVRLeftHandVisual")
+                instance.gameObject.AddComponent<SaveJointsToCSV>().handType = SaveJointsToCSV.HandType.Left;
+            else if (instance.gameObject.name == "OVRRightHandVisual")
+                instance.gameObject.AddComponent<SaveJointsToCSV>().handType = SaveJointsToCSV.HandType.Right;
+
+            instance.gameObject.GetComponent<SaveJointsToCSV>().Setup();
+        }
+        setUpCompleted = true;
     }
 
     private void WriteBodyDataToCSV()
@@ -60,6 +76,14 @@ public class SaveBodyDataToCSV : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            Setup();
+        }
+        if (!setUpCompleted)
+        {
+           return;
+        }
         if (pauseStreaming)
         {
             SaveJointsToCSV[] instances = FindObjectsOfType<SaveJointsToCSV>();
