@@ -9,6 +9,8 @@ public class GrabGame : MonoBehaviour
     public int maxNumberOfStones = 5;
     public bool isTimed = false;
     public float countdownTime = 30f;
+    public GameObject location1, location2;
+    public GameObject stonePrefabLocation, stonePrefab;
 
     [Header("UI Elements")]
     public TextMeshProUGUI stonesRemainingText;
@@ -44,12 +46,13 @@ public class GrabGame : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("stone"))
         {
             stonesPlacedCount++;
             UpdateStonesRemainingText();
+            ShuffleStonePrefabLocation();
 
             if (stonesPlacedCount >= maxNumberOfStones)
             {
@@ -118,6 +121,20 @@ public class GrabGame : MonoBehaviour
         if (clip != null && audioSource != null)
         {
             audioSource.PlayOneShot(clip);
+        }
+    }
+
+    private void ShuffleStonePrefabLocation()
+    {
+        if (Random.Range(0, 2) == 0)
+        {
+            stonePrefabLocation.transform.position = location1.transform.position;
+            Debug.Log("Location 1");
+        }
+        else
+        {
+            stonePrefabLocation.transform.position = location2.transform.position;
+            Debug.Log("Location 2");
         }
     }
 }

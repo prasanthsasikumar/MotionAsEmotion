@@ -8,7 +8,7 @@ public class UIManagerScript : MonoBehaviour
     public int numberOfTimes = 3;
     public int countdownTime = 10;
     public GameObject frontPageObject, lastPageObject;
-    public bool isCountdown = false;
+    public bool timed = false;
     public Color pageObjectColor = Color.red;
     public AudioClip winSound, loseSound;
     public TMPro.TextMeshProUGUI countdownText;
@@ -35,7 +35,7 @@ public class UIManagerScript : MonoBehaviour
         backToggle.gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = pageObjectColor;
         backToggle.isOn = false;
 
-        if (isCountdown)
+        if (timed)
         {
             countdownCoroutine = StartCoroutine(CountdownRoutine());
         }

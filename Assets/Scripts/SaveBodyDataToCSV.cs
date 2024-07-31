@@ -17,6 +17,11 @@ public class SaveBodyDataToCSV : MonoBehaviour
     public bool pauseStreaming= false;
     private bool setUpCompleted = false;
 
+    private void Start()
+    {
+        GameObject.Find("OVRCameraRigInteraction").AddComponent<MovePlayerManually>();
+    }
+
     public void Setup()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
@@ -76,8 +81,9 @@ public class SaveBodyDataToCSV : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.L))
         {
+            Debug.Log("Setting up Data Logging");
             Setup();
         }
         if (!setUpCompleted)

@@ -7660,7 +7660,7 @@ MonoBehaviour:
   countdownTime: 10
   frontPageObject: {fileID: 5156493022094543717}
   lastPageObject: {fileID: 1500760423}
-  isCountdown: 0
+  timed: 1
   pageObjectColor: {r: 1, g: 0, b: 0, a: 1}
   winSound: {fileID: 8300000, guid: f8b159438a2941d4faf75ae2d7580ecc, type: 3}
   loseSound: {fileID: 8300000, guid: 6492190d1463de14399cf95cb1d0d8df, type: 3}

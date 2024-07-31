@@ -6,13 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/surangaDemo.unity
+    path: Assets/Scenes/NotUsed/surangaDemo.unity
     guid: fee9709d13f0dcf4cb5c3899951e2152
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/NotUsed/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/FindPairs.unity
+    path: Assets/Scenes/NotUsed/FindPairs.unity
     guid: f924e886af7ff934e922f75125c01f31
   - enabled: 1
     path: Assets/Samples/Meta XR Interaction SDK/66.0.0/Example Scenes/BodyPoseDetectionExamples.unity
