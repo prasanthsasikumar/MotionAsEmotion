@@ -14,6 +14,7 @@ public class SequenceGameManager_iTiles : MonoBehaviour
     public float maxDelay = 1.5f;
     public float buttonYOffset = 0.07f;
     public float buttonDiameter = 0.3f;
+    public bool pilotStepUp = false;
 
     [Header("UI Elements")]
     public TextMeshProUGUI timeTaken;
@@ -212,6 +213,8 @@ public class SequenceGameManager_iTiles : MonoBehaviour
     {
         gameEnded = true;
         infoFrame.text = won ? "You win!" : "You lose!";
+        if (pilotStepUp)
+            difficulty++;
         var audioSource = GetComponent<AudioSource>();
         audioSource.PlayOneShot(won ? winSound : loseSound);
 

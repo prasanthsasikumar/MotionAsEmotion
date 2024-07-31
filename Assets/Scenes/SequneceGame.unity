@@ -1310,6 +1310,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 29ef1b6172840104c9f894420a6c24ca, type: 3}
   - {fileID: 21300000, guid: a0a32d086012c1b4da9d6f65f9e2625c, type: 3}
   backImage: {fileID: 21300000, guid: 531e2065e4cb5224ebadabcfa24ae77a, type: 3}
+  highLightedImage: {fileID: 21300000, guid: 3657addd5176e2f4196e4cce7c05392f, type: 3}
   cardParent: {fileID: 1903863920}
   flipDuration: 0.5
   maxCards: 16
@@ -1318,6 +1319,9 @@ MonoBehaviour:
   maxDelay: 1.5
   timeTaken: {fileID: 1627959391}
   message: {fileID: 1627959391}
+  useHighlightInstedOfFlip: 1
+  winSound: {fileID: 8300000, guid: f8b159438a2941d4faf75ae2d7580ecc, type: 3}
+  loseSound: {fileID: 8300000, guid: 6492190d1463de14399cf95cb1d0d8df, type: 3}
 --- !u!114 &1039308109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3046,6 +3050,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2349022427579271411, guid: 6d0daa33399ecd14bb5adf1b1ea21830,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2349022427579271414, guid: 6d0daa33399ecd14bb5adf1b1ea21830,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -4211,6 +4220,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3122796561798776624, guid: 6d0daa33399ecd14bb5adf1b1ea21830,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3122796561798776624, guid: 6d0daa33399ecd14bb5adf1b1ea21830,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: f2648ced3f27f1b4abd34399b499a154, type: 2}
     - target: {fileID: 3335504149494925611, guid: 6d0daa33399ecd14bb5adf1b1ea21830,
         type: 3}
       propertyPath: m_SizeDelta.y
@@ -4480,6 +4499,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3335504150923645948, guid: 6d0daa33399ecd14bb5adf1b1ea21830,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3335504151033668841, guid: 6d0daa33399ecd14bb5adf1b1ea21830,
         type: 3}

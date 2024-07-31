@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class SequenceGameManager : MonoBehaviour
 {
     public List<Sprite> images;
-    public Sprite backImage;
+    public Sprite backImage, highLightedImage;
     public Transform cardParent;
     public float flipDuration = 0.5f;
     public int maxCards = 16;
@@ -17,12 +17,16 @@ public class SequenceGameManager : MonoBehaviour
     public float maxDelay = 1.5f;
     public TextMeshProUGUI timeTaken;
     public TextMeshProUGUI message;
+    public bool useHighlightInstedOfFlip = false;
 
+    [Header("Game Objects")]
+    public AudioClip winSound, loseSound;
     private List<Transform> cards = new List<Transform>();
     private List<Transform> sequence = new List<Transform>();
     private int currentSequenceIndex = 0;
     private float timer = 0f;
     private bool gameEnded = false;
+
 
     void Start()
     {
@@ -31,6 +35,7 @@ public class SequenceGameManager : MonoBehaviour
         AssignImagesToCards();
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
+        gameObject.AddComponent<AudioSource>();
     }
 
     void InitializeCards()
@@ -100,9 +105,10 @@ public class SequenceGameManager : MonoBehaviour
         foreach (Transform card in sequence)
         {
             yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
-            StartCoroutine(FlipCard(card, true));
+            //StartCoroutine(FlipCard(card, true));
+            StartCoroutine(HighlightCard(card));
             yield return new WaitForSeconds(flipDuration);
-            StartCoroutine(FlipCard(card, false));
+            //StartCoroutine(FlipCard(card, false));
         }
 
         foreach (Transform card in cards)
@@ -126,16 +132,19 @@ public class SequenceGameManager : MonoBehaviour
             {
                 gameEnded = true;
                 message.text = "You win!";
+                GetComponent<AudioSource>().PlayOneShot(winSound);
             }
         }
         else
         {
             gameEnded = true;
             message.text = "You lose!";
+            GetComponent<AudioSource>().PlayOneShot(loseSound);
+            Restart();
         }
     }
 
-    IEnumerator FlipCard(Transform card, bool flip, bool useHighlight=false)
+    IEnumerator FlipCard(Transform card, bool flip)
     {
         float elapsedTime = 0f;
         Vector3 startRotation = card.localEulerAngles;
@@ -143,11 +152,7 @@ public class SequenceGameManager : MonoBehaviour
 
         while (elapsedTime < flipDuration)
         {
-            if(useHighlight)
-                card.GetComponent<Image>().color = Color.Lerp(Color.black, Color.blue, (elapsedTime / flipDuration));
-            else
-                card.localEulerAngles = Vector3.Lerp(startRotation, endRotation, (elapsedTime / flipDuration));
-
+            card.localEulerAngles = Vector3.Lerp(startRotation, endRotation, (elapsedTime / flipDuration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -158,6 +163,18 @@ public class SequenceGameManager : MonoBehaviour
             card.GetComponent<Image>().sprite = backImage;
 
         card.localEulerAngles = endRotation;
+    }
+
+    IEnumerator HighlightCard(Transform card)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < flipDuration)
+        {
+            card.GetComponent<Image>().sprite = highLightedImage;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        card.GetComponent<Image>().sprite = backImage;
     }
 
     IEnumerator Timer()
@@ -195,6 +212,12 @@ public class SequenceGameManager : MonoBehaviour
         AssignImagesToCards();
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+            Restart();
     }
 }
 
