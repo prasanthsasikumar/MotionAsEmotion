@@ -15,6 +15,15 @@ public class SkyBoxFetcher : MonoBehaviour
         StartCoroutine(GetRequests());
     }
 
+    public void Update()
+    {
+        //if B button on controller is pressed, reload the scene
+        if (OVRInput.GetDown(OVRInput.Button.Two)|| Input.GetKeyDown(KeyCode.B))
+        {
+            StartCoroutine(GetRequests());
+        }
+    }
+
     IEnumerator GetRequests()
     {
         // Create a UnityWebRequest

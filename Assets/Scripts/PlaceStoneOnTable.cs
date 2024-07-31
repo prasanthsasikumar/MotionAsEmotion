@@ -1,36 +1,123 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
 
-public class PlaceStoneOnTable : MonoBehaviour
+public class StonePlacementManager : MonoBehaviour
 {
-    public UnityEvent onStonePlaced;
-    public int count = 0;
-    // Start is called before the first frame update
-    void Start()
+    [Header("Settings")]
+    public int maxNumberOfStones = 5;
+    public bool isTimed = false;
+    public float countdownTime = 30f;
+
+    [Header("UI Elements")]
+    public TextMeshProUGUI stonesRemainingText;
+    public TextMeshProUGUI timerText;
+
+    [Header("Audio Clips")]
+    public AudioClip winSound;
+    public AudioClip loseSound;
+
+    [Header("Events")]
+    public UnityEvent onAllStonesPlaced;
+    public UnityEvent onTimeUp;
+
+    private int stonesPlacedCount = 0;
+    private float timeRemaining;
+    private AudioSource audioSource;
+
+    private void Start()
     {
-        
+        Initialize();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Initialize()
     {
-        
+        timeRemaining = countdownTime;
+        audioSource = gameObject.AddComponent<AudioSource>();
+
+        UpdateStonesRemainingText();
+
+        if (isTimed)
+        {
+            StartCoroutine(CountdownRoutine());
+        }
     }
 
-    //check if the something is placed on the table
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Something placed on the table");
-        if (other.gameObject.tag == "stone")
+        if (other.CompareTag("stone"))
         {
-            count++;
-            if (count > 5)
+            stonesPlacedCount++;
+            UpdateStonesRemainingText();
+
+            if (stonesPlacedCount >= maxNumberOfStones)
             {
-                Debug.Log("All stones placed");
-                onStonePlaced.Invoke();
+                OnAllStonesPlaced();
             }
+        }
+    }
+
+    private void OnAllStonesPlaced()
+    {
+        onAllStonesPlaced.Invoke();
+        PlayAudioClip(winSound);
+    }
+
+    private IEnumerator CountdownRoutine()
+    {
+        while (timeRemaining > 0)
+        {
+            yield return new WaitForSeconds(1);
+            timeRemaining--;
+            UpdateTimerText();
+        }
+
+        OnTimeUp();
+    }
+
+    private void OnTimeUp()
+    {
+        onTimeUp.Invoke();
+        PlayAudioClip(loseSound);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetGame();
+        }
+    }
+
+    public void ResetGame()
+    {
+        stonesPlacedCount = 0;
+        UpdateStonesRemainingText();
+
+        if (isTimed)
+        {
+            timeRemaining = countdownTime;
+            UpdateTimerText();
+            StartCoroutine(CountdownRoutine());
+        }
+    }
+
+    private void UpdateStonesRemainingText()
+    {
+        stonesRemainingText.text = $"Place {maxNumberOfStones - stonesPlacedCount} more stones";
+    }
+
+    private void UpdateTimerText()
+    {
+        timerText.text = $"Time: {timeRemaining}";
+    }
+
+    private void PlayAudioClip(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
         }
     }
 }
