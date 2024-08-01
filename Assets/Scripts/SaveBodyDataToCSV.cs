@@ -20,12 +20,13 @@ public class SaveBodyDataToCSV : MonoBehaviour
     private void Start()
     {
         GameObject.Find("OVRCameraRigInteraction").AddComponent<MovePlayerManually>();
+        Setup();
     }
 
     public void Setup()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        string timeString = System.DateTime.Now.ToString("HH-mm");
+        string timeString = System.DateTime.Now.ToString("HH-mm-ss");
         string filename = timeString + "-" + sceneName + "-body.csv";
         csvFilePath = Path.Combine(Application.persistentDataPath, filename);
 
@@ -46,6 +47,13 @@ public class SaveBodyDataToCSV : MonoBehaviour
         writer.WriteLine("Timestamp,ObjectName,PositionX,PositionY,PositionZ,RotationX,RotationY,RotationZ,RotationW");
 
         HandVisual[] instances = FindObjectsOfType<HandVisual>();
+        Debug.Log(instances.Length);       
+        foreach (HandVisual instance in instances)
+        {
+            Debug.Log(instance.gameObject.name);
+        }
+        instances = new HandVisual[] { instances[0], instances[1] };
+
         foreach (HandVisual instance in instances)
         { 
             Debug.Log("Setting up SaveJointsToCSV");

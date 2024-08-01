@@ -8501,6 +8501,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1370231628}
   - component: {fileID: 1370231629}
+  - component: {fileID: 1370231630}
   m_Layer: 0
   m_Name: Slingshot
   m_TagString: Untagged
@@ -8558,6 +8559,19 @@ MonoBehaviour:
   - {fileID: 1077801076}
   parent: {fileID: 272260300}
   numberOfBalls: 7
+--- !u!114 &1370231630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1370231627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1bf23feec528e74aa2fc665544839a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseStreaming: 0
 --- !u!1 &1378093979
 GameObject:
   m_ObjectHideFlags: 0

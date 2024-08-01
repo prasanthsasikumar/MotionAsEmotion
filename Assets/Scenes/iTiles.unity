@@ -434,6 +434,7 @@ GameObject:
   m_Component:
   - component: {fileID: 19489006}
   - component: {fileID: 19489007}
+  - component: {fileID: 19489008}
   m_Layer: 0
   m_Name: iTiles
   m_TagString: Untagged
@@ -450,9 +451,9 @@ Transform:
   m_GameObject: {fileID: 19489005}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.271, y: 0.9258928, z: 0.681}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: -0.425, y: 0.9258928, z: 0.563}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2859147190549632954}
   - {fileID: 2859147191744915361}
@@ -490,6 +491,19 @@ MonoBehaviour:
     type: 3}
   winSound: {fileID: 8300000, guid: f8b159438a2941d4faf75ae2d7580ecc, type: 3}
   loseSound: {fileID: 8300000, guid: 6492190d1463de14399cf95cb1d0d8df, type: 3}
+--- !u!114 &19489008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19489005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1bf23feec528e74aa2fc665544839a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseStreaming: 0
 --- !u!114 &66352474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5980,6 +5994,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _sleepFrames: 0
+  _initialPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &1411452444
 GameObject:
   m_ObjectHideFlags: 0
