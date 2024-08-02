@@ -12,6 +12,8 @@ public class UIManagerScript : MonoBehaviour
     public Color pageObjectColor = Color.red;
     public AudioClip winSound, loseSound;
     public TMPro.TextMeshProUGUI countdownText;
+    public List<ScrollRect> scrollRects;
+    public bool verticalScroll = false;
 
     private int currentTry = 0;
     private Toggle frontToggle;
@@ -40,6 +42,10 @@ public class UIManagerScript : MonoBehaviour
             countdownCoroutine = StartCoroutine(CountdownRoutine());
         }
         this.gameObject.AddComponent<AudioSource>();
+        if (!verticalScroll)
+        {
+            ToggleVerticalScroll(false);
+        }
     }
 
     void OnFrontToggleChanged(bool isOn)
@@ -143,6 +149,14 @@ public class UIManagerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             Reset();
+        }
+    }
+
+    public void ToggleVerticalScroll(bool value)
+    {
+       foreach (var scrollRect in scrollRects)
+        {
+            scrollRect.vertical = value;
         }
     }
 }

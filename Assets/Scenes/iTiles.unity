@@ -478,11 +478,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonParent: {fileID: 1830271189}
   numberOfButtons: 10
-  difficulty: 5
-  minDelay: 0.5
-  maxDelay: 1
+  difficulty: 3
+  minDelay: 0.3
+  maxDelay: 0.7
   buttonYOffset: 0.07
-  buttonDiameter: 0.2
+  buttonDiameter: 0.15
   pilotStepUp: 0
   timeTaken: {fileID: 2859147191258702172}
   infoFrame: {fileID: 645175373}

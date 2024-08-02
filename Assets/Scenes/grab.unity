@@ -2193,9 +2193,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 842d8fbf24394e54baabe7abab6896b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxNumberOfStones: 5
-  isTimed: 0
-  countdownTime: 30
+  maxNumberOfStones: 20
+  isTimed: 1
+  countdownTime: 60
   location1: {fileID: 146562831}
   location2: {fileID: 200717142}
   stonePrefabLocation: {fileID: 739979648}

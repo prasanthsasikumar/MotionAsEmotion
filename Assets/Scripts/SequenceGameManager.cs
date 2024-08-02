@@ -133,6 +133,7 @@ public class SequenceGameManager : MonoBehaviour
                 gameEnded = true;
                 message.text = "You win!";
                 GetComponent<AudioSource>().PlayOneShot(winSound);
+                Restart();
             }
         }
         else
@@ -140,6 +141,7 @@ public class SequenceGameManager : MonoBehaviour
             gameEnded = true;
             message.text = "You lose!";
             GetComponent<AudioSource>().PlayOneShot(loseSound);
+            StartCoroutine(DelayFunction(2f));
             Restart();
         }
     }
@@ -218,6 +220,11 @@ public class SequenceGameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
             Restart();
+    }
+
+    IEnumerator DelayFunction(float delay)
+    {
+        yield return new WaitForSeconds(delay);
     }
 }
 

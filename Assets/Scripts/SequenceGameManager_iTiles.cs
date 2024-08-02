@@ -222,6 +222,9 @@ public class SequenceGameManager_iTiles : MonoBehaviour
         {
             SetButtonColor(button, won ? 1 : 0);
         }
+
+        StartCoroutine(DelayFunction(2f));
+        Restart();
     }
 
     private IEnumerator Timer()
@@ -258,5 +261,10 @@ public class SequenceGameManager_iTiles : MonoBehaviour
         {
             Restart();
         }
+    }
+
+    private IEnumerator DelayFunction(float delay)
+    {
+        yield return new WaitForSeconds(delay);
     }
 }

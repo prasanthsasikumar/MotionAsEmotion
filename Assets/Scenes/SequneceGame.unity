@@ -1314,9 +1314,9 @@ MonoBehaviour:
   cardParent: {fileID: 1903863920}
   flipDuration: 0.5
   maxCards: 16
-  difficulty: 5
-  minDelay: 0.5
-  maxDelay: 1.5
+  difficulty: 8
+  minDelay: 0.4
+  maxDelay: 1
   timeTaken: {fileID: 1627959391}
   message: {fileID: 1627959391}
   useHighlightInstedOfFlip: 1
