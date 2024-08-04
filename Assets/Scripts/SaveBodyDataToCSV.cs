@@ -1,7 +1,9 @@
 using Oculus.Interaction;
 using System;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SaveBodyDataToCSV : MonoBehaviour
 {
@@ -15,12 +17,15 @@ public class SaveBodyDataToCSV : MonoBehaviour
     private StreamWriter writer;
 
     public bool pauseStreaming= false;
+    public int duration = 60;
+    public UnityEvent OnSetUpCompleted;
     private bool setUpCompleted = false;
+    private float startTime;
 
     private void Start()
     {
         GameObject.Find("OVRCameraRigInteraction").AddComponent<MovePlayerManually>();
-        Setup();
+        //Setup();
     }
 
     public void Setup()
@@ -66,6 +71,8 @@ public class SaveBodyDataToCSV : MonoBehaviour
             instance.gameObject.GetComponent<SaveJointsToCSV>().Setup();
         }
         setUpCompleted = true;
+        OnSetUpCompleted.Invoke();
+        startTime = Time.time;
     }
 
     private void WriteBodyDataToCSV()
@@ -111,6 +118,15 @@ public class SaveBodyDataToCSV : MonoBehaviour
         if (Time.frameCount % 6 == 0)
         {
             WriteBodyDataToCSV();
+        }
+        print(Time.time - startTime);
+        if (Time.time - startTime > duration)
+        {
+            #if UNITY_EDITOR
+                        EditorApplication.isPlaying = false;
+            #else
+                    Application.Quit();
+            #endif
         }
     }
 

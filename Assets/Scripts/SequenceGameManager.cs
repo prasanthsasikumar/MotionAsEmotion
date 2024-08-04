@@ -1,55 +1,69 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SequenceGameManager : MonoBehaviour
 {
+    [Header("Images")]
     public List<Sprite> images;
     public Sprite backImage, highLightedImage;
+
+    [Header("Game Settings")]
     public Transform cardParent;
     public float flipDuration = 0.5f;
     public int maxCards = 16;
     public int difficulty = 5;
     public float minDelay = 0.5f;
     public float maxDelay = 1.5f;
+
+    [Header("UI Elements")]
     public TextMeshProUGUI timeTaken;
     public TextMeshProUGUI message;
-    public bool useHighlightInstedOfFlip = false;
 
-    [Header("Game Objects")]
+    [Header("Audio")]
     public AudioClip winSound, loseSound;
+
     private List<Transform> cards = new List<Transform>();
     private List<Transform> sequence = new List<Transform>();
     private int currentSequenceIndex = 0;
     private float timer = 0f;
     private bool gameEnded = false;
 
+    private AudioSource audioSource;
 
-    void Start()
+    /// <summary>
+    /// Initializes the game.
+    /// </summary>
+    public void StartGame()
     {
         InitializeCards();
         ShuffleCards();
         AssignImagesToCards();
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
-        gameObject.AddComponent<AudioSource>();
+        audioSource = gameObject.AddComponent<AudioSource>();
     }
 
-    void InitializeCards()
+    /// <summary>
+    /// Initializes card objects and adds them to the cards list.
+    /// </summary>
+    private void InitializeCards()
     {
         foreach (Transform child in cardParent)
         {
-            if (cards.Count >= maxCards)
-                break;
-            cards.Add(child.GetChild(0).GetChild(0));
-            cards[cards.Count - 1].AddComponent<Card>();
+            if (cards.Count >= maxCards) break;
+            Transform cardTransform = child.GetChild(0).GetChild(0);
+            cards.Add(cardTransform);
+            cardTransform.gameObject.AddComponent<Card>();
         }
     }
 
-    void ShuffleCards()
+    /// <summary>
+    /// Shuffles the cards list.
+    /// </summary>
+    private void ShuffleCards()
     {
         for (int i = cards.Count - 1; i > 0; i--)
         {
@@ -60,7 +74,10 @@ public class SequenceGameManager : MonoBehaviour
         }
     }
 
-    void AssignImagesToCards()
+    /// <summary>
+    /// Assigns images to cards.
+    /// </summary>
+    private void AssignImagesToCards()
     {
         List<Sprite> selectedImages = new List<Sprite>();
         for (int i = 0; i < cards.Count / 2; i++)
@@ -70,7 +87,7 @@ public class SequenceGameManager : MonoBehaviour
             selectedImages.Add(image);
         }
 
-        selectedImages.Shuffle(); // Shuffle the selected images list
+        selectedImages.Shuffle(); // Ensure you have a Shuffle extension method
 
         for (int i = 0; i < cards.Count; i++)
         {
@@ -79,7 +96,10 @@ public class SequenceGameManager : MonoBehaviour
         }
     }
 
-    IEnumerator ShowSequence()
+    /// <summary>
+    /// Shows the sequence to the player.
+    /// </summary>
+    private IEnumerator ShowSequence()
     {
         sequence.Clear();
         List<int> indices = new List<int>();
@@ -96,78 +116,45 @@ public class SequenceGameManager : MonoBehaviour
             sequence.Add(cards[index]);
         }
 
-        foreach (Transform card in cards)
-        {
-            card.GetComponent<Image>().sprite = backImage;
-            card.GetComponent<Card>().SetInteractable(false);
-        }
+        ResetCardsToBackImage();
 
         foreach (Transform card in sequence)
         {
             yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
-            //StartCoroutine(FlipCard(card, true));
             StartCoroutine(HighlightCard(card));
             yield return new WaitForSeconds(flipDuration);
-            //StartCoroutine(FlipCard(card, false));
         }
 
-        foreach (Transform card in cards)
-        {
-            card.GetComponent<Card>().SetInteractable(true);
-        }
-
+        SetCardsInteractable(true);
         currentSequenceIndex = 0;
         message.text = "Repeat the sequence!";
     }
 
+    /// <summary>
+    /// Handles card selection logic.
+    /// </summary>
     public void OnCardSelected(Transform selectedCard)
     {
-        if (selectedCard.GetComponent<Card>().solved)
-            return;
+        if (selectedCard.GetComponent<Card>().solved) return;
 
         if (sequence[currentSequenceIndex] == selectedCard)
         {
             currentSequenceIndex++;
             if (currentSequenceIndex >= sequence.Count)
             {
-                gameEnded = true;
-                message.text = "You win!";
-                GetComponent<AudioSource>().PlayOneShot(winSound);
-                Restart();
+                EndGame(true);
             }
         }
         else
         {
-            gameEnded = true;
-            message.text = "You lose!";
-            GetComponent<AudioSource>().PlayOneShot(loseSound);
-            StartCoroutine(DelayFunction(2f));
-            Restart();
+            EndGame(false);
         }
     }
 
-    IEnumerator FlipCard(Transform card, bool flip)
-    {
-        float elapsedTime = 0f;
-        Vector3 startRotation = card.localEulerAngles;
-        Vector3 endRotation = flip ? new Vector3(0, 180, 0) : Vector3.zero;
-
-        while (elapsedTime < flipDuration)
-        {
-            card.localEulerAngles = Vector3.Lerp(startRotation, endRotation, (elapsedTime / flipDuration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        if (flip)
-            card.GetComponent<Image>().sprite = card.GetComponent<Card>().frontImage;
-        else
-            card.GetComponent<Image>().sprite = backImage;
-
-        card.localEulerAngles = endRotation;
-    }
-
-    IEnumerator HighlightCard(Transform card)
+    /// <summary>
+    /// Highlights a card.
+    /// </summary>
+    private IEnumerator HighlightCard(Transform card)
     {
         float elapsedTime = 0f;
         while (elapsedTime < flipDuration)
@@ -179,52 +166,84 @@ public class SequenceGameManager : MonoBehaviour
         card.GetComponent<Image>().sprite = backImage;
     }
 
-    IEnumerator Timer()
+    /// <summary>
+    /// Timer coroutine.
+    /// </summary>
+    private IEnumerator Timer()
     {
         while (!gameEnded)
         {
             timer += Time.deltaTime;
             yield return null;
         }
-        timeTaken.text = "Time taken: " + timer;
-        Debug.Log("Time taken: " + timer);
+        timeTaken.text = $"Time taken: {timer:F2} seconds";
+        Debug.Log($"Time taken: {timer:F2} seconds");
     }
 
+    /// <summary>
+    /// Ends the game with a win or loss.
+    /// </summary>
+    private void EndGame(bool won)
+    {
+        gameEnded = true;
+        message.text = won ? "You win!" : "You lose!";
+        audioSource.PlayOneShot(won ? winSound : loseSound);
+        StartCoroutine(DelayAndRestart(2f));
+    }
+
+    /// <summary>
+    /// Restarts the game.
+    /// </summary>
     public void Restart()
     {
-        // Reset the timer and gameEnded flag
         timer = 0f;
         gameEnded = false;
         timeTaken.text = "";
         message.text = "";
-
-        // Clear the current sequence
         sequence.Clear();
-
-        // Reset the card states
-        foreach (Transform card in cards)
-        {
-            card.GetComponent<Card>().SetInteractable(true);
-            card.GetComponent<Card>().solved = false;
-            card.GetComponent<Image>().sprite = backImage;
-        }
-
-        // Reinitialize cards, shuffle, assign images, and show the sequence
+        ResetCardsToBackImage();
+        SetCardsInteractable(true);
         ShuffleCards();
         AssignImagesToCards();
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
     }
 
-    public void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
+        {
             Restart();
+        }
     }
 
-    IEnumerator DelayFunction(float delay)
+    private IEnumerator DelayAndRestart(float delay)
     {
         yield return new WaitForSeconds(delay);
+        Restart();
+    }
+
+    /// <summary>
+    /// Resets cards to back image and makes them non-interactable.
+    /// </summary>
+    private void ResetCardsToBackImage()
+    {
+        foreach (Transform card in cards)
+        {
+            card.GetComponent<Image>().sprite = backImage;
+            card.GetComponent<Card>().SetInteractable(false);
+        }
+    }
+
+    /// <summary>
+    /// Sets cards interactable state.
+    /// </summary>
+    /// <param name="state">State to set</param>
+    private void SetCardsInteractable(bool state)
+    {
+        foreach (Transform card in cards)
+        {
+            card.GetComponent<Card>().SetInteractable(state);
+        }
     }
 }
-

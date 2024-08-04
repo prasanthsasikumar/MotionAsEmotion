@@ -8558,9 +8558,10 @@ MonoBehaviour:
   - {fileID: 1503261957}
   - {fileID: 1077801076}
   parent: {fileID: 272260300}
-  numberOfBalls: 2
+  initialBallCount: 7
   counterText: {fileID: 2859147189873701456}
   groundThreshold: 0.3
+  hardCondition: 1
 --- !u!114 &1370231630
 MonoBehaviour:
   m_ObjectHideFlags: 0
