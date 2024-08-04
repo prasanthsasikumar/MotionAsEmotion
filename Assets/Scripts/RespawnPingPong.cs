@@ -1,65 +1,83 @@
 using Oculus.Interaction.Samples;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using TMPro;
 using UnityEngine;
 
 public class SlingShotController : MonoBehaviour
 {
-    public RespawnOnDrop[] respawnComponents;
-    public GameObject parent;
-    public int numberOfBalls = 7;
-    public TextMeshProUGUI counterText;
-    public float groundThreshold = 0.3f;
+    [SerializeField]
+    private RespawnOnDrop[] respawnComponents;
 
-    private int minBalls, maxBalls;
+    [SerializeField]
+    private GameObject parent;
+
+    [SerializeField]
+    private int initialBallCount = 7;
+
+    [SerializeField]
+    private TextMeshProUGUI counterText;
+
+    [SerializeField]
+    private float groundThreshold = 0.3f;
+
+    [SerializeField]
+    private bool hardCondition = false;
+
+    private int currentBallCount;
+    private int minBalls = 1;
+    private int maxBalls;
     private List<GameObject> cups;
-    private int counter = 0;
+    private int score = 0;
+    private int currentCupIndex = 0;
+    private Color originalColor;
+    private Color targetColor = Color.red;
 
     private void Start()
     {
-        minBalls = 1;
-        maxBalls = 0;
-        for (int i = 0; i < transform.childCount; i++)
+        UpdateBallCount();
+        maxBalls = currentBallCount;
+        cups = GetCups();
+
+        if (hardCondition)
         {
-            if (parent.transform.GetChild(i).name == "PingPongBall")
-            {
-                numberOfBalls++;
-            }
+            SetNextCupColor(currentCupIndex);
         }
-        maxBalls = numberOfBalls;
-        cups = GetCupList();
     }
+
     public void OnCanvasGroupChanged()
     {
-        respawnComponents = parent.transform.GetComponentsInChildren<RespawnOnDrop>();
+        respawnComponents = parent.GetComponentsInChildren<RespawnOnDrop>();
     }
 
     public void RespawnAll()
     {
-        int tempNumberOfBalls = numberOfBalls;
-        for (int i = 0; i < respawnComponents.Length; i++)
+        int ballsToRespawn = currentBallCount;
+
+        foreach (var respawnComponent in respawnComponents)
         {
-            if (respawnComponents[i].gameObject.name == "PingPongBall")
+            if (respawnComponent.gameObject.name == "PingPongBall")
             {
-                if (tempNumberOfBalls > 0)
+                if (ballsToRespawn > 0)
                 {
-                    respawnComponents[i].gameObject.SetActive(true);
-                    respawnComponents[i].Respawn();
-                    tempNumberOfBalls--;
-                    print("PingPongBalRespawned");
+                    respawnComponent.gameObject.SetActive(true);
+                    respawnComponent.Respawn();
+                    ballsToRespawn--;
                 }
                 else
                 {
-                    respawnComponents[i].gameObject.SetActive(false);
+                    respawnComponent.gameObject.SetActive(false);
                 }
-
             }
             else
             {
-                respawnComponents[i].Respawn();
+                respawnComponent.Respawn();
             }
+        }
+
+        if (hardCondition)
+        {
+            currentCupIndex = 0;
+            SetNextCupColor(currentCupIndex);
         }
     }
 
@@ -69,33 +87,114 @@ public class SlingShotController : MonoBehaviour
         {
             RespawnAll();
         }
-        bool allCupsBelowGround = true;
-        for (int i = 0; i < cups.Count; i++)
+
+        if (hardCondition)
         {
-            if (cups[i].transform.position.y >= groundThreshold)
+            if (cups[currentCupIndex].transform.position.y < groundThreshold)
             {
-                allCupsBelowGround = false;
-                break;
+                currentCupIndex++;
+
+                if (currentCupIndex >= cups.Count)
+                {
+                    IncrementScore();
+                    RespawnAll();
+                }
+                else
+                {
+                    SetNextCupColor(currentCupIndex);
+                }
+            }
+            else if (AnyCupOutOfOrder())
+            {
+                //RespawnAll();
             }
         }
-        if (allCupsBelowGround)
+        else if (AreAllCupsBelowGround())
         {
-            counter++;
-            counterText.text = "Score : " + counter;
+            IncrementScore();
             RespawnAll();
         }
     }
 
-    private List<GameObject> GetCupList()
+    private void UpdateBallCount()
     {
-        List<GameObject> cups = new List<GameObject>();
-        for (int i = 0; i < respawnComponents.Length; i++)
+        currentBallCount = initialBallCount;
+
+        for (int i = 0; i < transform.childCount; i++)
         {
-            if (respawnComponents[i].gameObject.name == "PlasticCup")
+            if (parent.transform.GetChild(i).name == "PingPongBall")
             {
-                cups.Add(respawnComponents[i].gameObject);
+                currentBallCount++;
             }
         }
+    }
+
+    private List<GameObject> GetCups()
+    {
+        var cups = new List<GameObject>();
+
+        foreach (var respawnComponent in respawnComponents)
+        {
+            if (respawnComponent.gameObject.name == "PlasticCup")
+            {
+                cups.Add(respawnComponent.gameObject);
+            }
+        }
+
         return cups;
+    }
+
+    private bool AreAllCupsBelowGround()
+    {
+        foreach (var cup in cups)
+        {
+            if (cup.transform.position.y >= groundThreshold)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool AnyCupOutOfOrder()
+    {
+        for (int i = 0; i < cups.Count; i++)
+        {
+            if (i != currentCupIndex && cups[i].transform.position.y < groundThreshold)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void IncrementScore()
+    {
+        score++;
+        counterText.text = "Score: " + score;
+    }
+
+    private void SetNextCupColor(int index)
+    {
+        ResetCupColors();
+        var meshRenderer = cups[index].GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            originalColor = meshRenderer.material.color;
+            meshRenderer.material.color = targetColor;
+        }
+    }
+
+    private void ResetCupColors()
+    {
+        foreach (var cup in cups)
+        {
+            var meshRenderer = cup.GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
+                meshRenderer.material.color = originalColor;
+            }
+        }
     }
 }
