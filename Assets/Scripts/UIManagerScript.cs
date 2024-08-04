@@ -42,10 +42,7 @@ public class UIManagerScript : MonoBehaviour
             countdownCoroutine = StartCoroutine(CountdownRoutine());
         }
         this.gameObject.AddComponent<AudioSource>();
-        if (!verticalScroll)
-        {
-            ToggleVerticalScroll(false);
-        }
+        ToggleVerticalScroll();
     }
 
     void OnFrontToggleChanged(bool isOn)
@@ -152,11 +149,11 @@ public class UIManagerScript : MonoBehaviour
         }
     }
 
-    public void ToggleVerticalScroll(bool value)
+    public void ToggleVerticalScroll()
     {
        foreach (var scrollRect in scrollRects)
         {
-            scrollRect.vertical = value;
+            scrollRect.vertical = verticalScroll;
         }
     }
 }
