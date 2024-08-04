@@ -2,15 +2,20 @@ using Oculus.Interaction.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using TMPro;
 using UnityEngine;
 
 public class SlingShotController : MonoBehaviour
 {
     public RespawnOnDrop[] respawnComponents;
     public GameObject parent;
-    public int numberOfBalls = 7; 
+    public int numberOfBalls = 7;
+    public TextMeshProUGUI counterText;
+    public float groundThreshold = 0.3f;
 
     private int minBalls, maxBalls;
+    private List<GameObject> cups;
+    private int counter = 0;
 
     private void Start()
     {
@@ -24,6 +29,7 @@ public class SlingShotController : MonoBehaviour
             }
         }
         maxBalls = numberOfBalls;
+        cups = GetCupList();
     }
     public void OnCanvasGroupChanged()
     {
@@ -63,5 +69,33 @@ public class SlingShotController : MonoBehaviour
         {
             RespawnAll();
         }
+        bool allCupsBelowGround = true;
+        for (int i = 0; i < cups.Count; i++)
+        {
+            if (cups[i].transform.position.y >= groundThreshold)
+            {
+                allCupsBelowGround = false;
+                break;
+            }
+        }
+        if (allCupsBelowGround)
+        {
+            counter++;
+            counterText.text = "Score : " + counter;
+            RespawnAll();
+        }
+    }
+
+    private List<GameObject> GetCupList()
+    {
+        List<GameObject> cups = new List<GameObject>();
+        for (int i = 0; i < respawnComponents.Length; i++)
+        {
+            if (respawnComponents[i].gameObject.name == "PlasticCup")
+            {
+                cups.Add(respawnComponents[i].gameObject);
+            }
+        }
+        return cups;
     }
 }
