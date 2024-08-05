@@ -18,6 +18,7 @@ public class SaveBodyDataToCSV : MonoBehaviour
 
     public bool pauseStreaming= false;
     public int duration = 60;
+    public float timeleft = 0;
     public UnityEvent OnSetUpCompleted;
     private bool setUpCompleted = false;
     private float startTime;
@@ -119,7 +120,7 @@ public class SaveBodyDataToCSV : MonoBehaviour
         {
             WriteBodyDataToCSV();
         }
-        print(Time.time - startTime);
+        timeleft = duration - (Time.time - startTime);
         if (Time.time - startTime > duration)
         {
             #if UNITY_EDITOR

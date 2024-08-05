@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Oculus.Interaction;
+using Oculus.Interaction.Input;
+using UnityEngine.UIElements;
 
 public class SaveJointsToCSV : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class SaveJointsToCSV : MonoBehaviour
 
     public bool pauseStreaming = false;
     private bool setUpCompleted = false;
+    private HandVisual handVisual;
 
     public enum HandType
     {
@@ -32,7 +35,7 @@ public class SaveJointsToCSV : MonoBehaviour
         string filename = timeString + "-" + sceneName;
         string fileName = handType == HandType.Left ? filename + "-left_hand.csv" : filename + "-right_hand.csv";
         csvFilePath = Path.Combine(Application.persistentDataPath, fileName);
-        HandVisual handVisual = GetComponent<HandVisual>();
+        handVisual = GetComponent<HandVisual>();
         if (handVisual != null)
         {
             _jointTransforms = new List<Transform>(handVisual.Joints);
@@ -52,6 +55,11 @@ public class SaveJointsToCSV : MonoBehaviour
     private void SaveJointsDataToCSV()
     {
         string timestamp = DateTime.Now.ToString("o");
+
+        
+        float pinchStrength = handVisual.Hand.GetFingerPinchStrength(HandFinger.Index);
+        string pinchLine = $"{timestamp},pinchStrength,{pinchStrength},0,0,0,0,0,0";
+        writer.WriteLine(pinchLine);
 
         // Write each joint's data with timestamp
         foreach (Transform joint in _jointTransforms)
