@@ -115,7 +115,7 @@ public class SaveBodyDataToCSV : MonoBehaviour
             return;
         }
         // Call the following function 10 times per second
-        if (Time.frameCount % 6 == 0)
+        if (Time.frameCount % 3 == 0)
         {
             WriteBodyDataToCSV();
         }

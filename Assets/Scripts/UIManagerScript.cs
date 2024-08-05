@@ -23,6 +23,12 @@ public class UIManagerScript : MonoBehaviour
 
     void Start()
     {
+        this.gameObject.AddComponent<AudioSource>();
+        ToggleVerticalScroll();
+    }
+
+    public void StartGame()
+    {
         frontToggle = frontPageObject.GetComponent<Toggle>();
         backToggle = lastPageObject.GetComponent<Toggle>();
 
@@ -41,8 +47,6 @@ public class UIManagerScript : MonoBehaviour
         {
             countdownCoroutine = StartCoroutine(CountdownRoutine());
         }
-        this.gameObject.AddComponent<AudioSource>();
-        ToggleVerticalScroll();
     }
 
     void OnFrontToggleChanged(bool isOn)

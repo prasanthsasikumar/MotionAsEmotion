@@ -34,9 +34,13 @@ public class SequenceGameManager_iTiles : MonoBehaviour
     private void Start()
     {
         PlaceButtonsOnTable();
+        gameObject.AddComponent<AudioSource>();
+    }
+
+    public void StartGame()
+    {
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
-        gameObject.AddComponent<AudioSource>();
     }
 
     private void PlaceButtonsOnTable()
