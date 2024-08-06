@@ -435,6 +435,7 @@ GameObject:
   - component: {fileID: 19489006}
   - component: {fileID: 19489007}
   - component: {fileID: 19489008}
+  - component: {fileID: 19489009}
   m_Layer: 0
   m_Name: iTiles
   m_TagString: Untagged
@@ -478,7 +479,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonParent: {fileID: 1830271189}
   numberOfButtons: 10
-  difficulty: 3
+  difficulty: 6
   minDelay: 0.3
   maxDelay: 0.7
   buttonYOffset: 0.07
@@ -505,6 +506,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseStreaming: 0
   duration: 60
+  timeleft: 0
   OnSetUpCompleted:
     m_PersistentCalls:
       m_Calls:
@@ -520,6 +522,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &19489009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19489005}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0798c4b52c198d4087ec5ef1e61b17a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cubePrefab: {fileID: 6825699594471915109, guid: 90ce50d28cdb5cf4d8d2bdc0133cfe85,
+    type: 3}
+  userCamera: {fileID: 2483171112249589650}
+  worldCenter: {fileID: 19489006}
+  distance: 1.2
+  yOffset: 0.2
 --- !u!114 &66352474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10388,7 +10408,7 @@ PrefabInstance:
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.1
+      value: -0.06
       objectReference: {fileID: 0}
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
@@ -10398,7 +10418,7 @@ PrefabInstance:
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.12
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}

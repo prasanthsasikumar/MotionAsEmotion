@@ -30,6 +30,8 @@ public class SequenceGameManager_iTiles : MonoBehaviour
     private int currentSequenceIndex = 0;
     private float timer = 0f;
     private bool gameEnded = false;
+    private bool gameInitialized = false;
+    private bool isPerformingAction = false;
 
     private void Start()
     {
@@ -41,6 +43,7 @@ public class SequenceGameManager_iTiles : MonoBehaviour
     {
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
+        gameInitialized = true;
     }
 
     private void PlaceButtonsOnTable()
@@ -139,6 +142,7 @@ public class SequenceGameManager_iTiles : MonoBehaviour
 
     private IEnumerator ShowSequence()
     {
+        isPerformingAction = true;
         yield return new WaitForSeconds(1f);
         infoFrame.text = "Ready?";
         yield return new WaitForSeconds(2f);
@@ -176,6 +180,7 @@ public class SequenceGameManager_iTiles : MonoBehaviour
 
         currentSequenceIndex = 0;
         infoFrame.text = "Repeat the sequence!";
+        isPerformingAction = false;
     }
 
     private void SetButtonColor(GameObject button, float value)
@@ -197,7 +202,12 @@ public class SequenceGameManager_iTiles : MonoBehaviour
 
     public void OnButtonSelected(GameObject selectedButton)
     {
+        if (isPerformingAction || !gameInitialized)
+            return;
+
         Debug.Log("Button selected: " + selectedButton.name);
+        if (sequence[currentSequenceIndex] == null)
+            return;//TODO
         if (sequence[currentSequenceIndex] == selectedButton)
         {
             currentSequenceIndex++;

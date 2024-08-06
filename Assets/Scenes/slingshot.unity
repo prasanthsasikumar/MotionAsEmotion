@@ -8575,6 +8575,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseStreaming: 0
+  duration: 60
+  timeleft: 0
+  OnSetUpCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1378093979
 GameObject:
   m_ObjectHideFlags: 0
@@ -14316,7 +14321,7 @@ PrefabInstance:
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.197
+      value: -0.189
       objectReference: {fileID: 0}
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
@@ -14326,7 +14331,7 @@ PrefabInstance:
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.242
+      value: -0.462
       objectReference: {fileID: 0}
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}

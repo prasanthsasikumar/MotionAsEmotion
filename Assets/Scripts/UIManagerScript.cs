@@ -111,7 +111,7 @@ public class UIManagerScript : MonoBehaviour
         while (elapsedTime < countdownTime)
         {
             elapsedTime += Time.deltaTime;
-            countdownText.text = "Swipes Left: " + currentTry + ", Time Left: " + Mathf.Ceil(countdownTime - elapsedTime).ToString();
+            countdownText.text = "Swipes Left: " + (numberOfTimes - currentTry) + ", Time Left: " + Mathf.Ceil(countdownTime - elapsedTime).ToString();
             yield return null;
         }
 

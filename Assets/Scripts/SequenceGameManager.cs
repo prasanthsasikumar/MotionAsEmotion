@@ -30,6 +30,8 @@ public class SequenceGameManager : MonoBehaviour
     private int currentSequenceIndex = 0;
     private float timer = 0f;
     private bool gameEnded = false;
+    private bool gameInitialized = false;
+    private bool isPerformingAction = false;
 
     private AudioSource audioSource;
 
@@ -44,6 +46,7 @@ public class SequenceGameManager : MonoBehaviour
         StartCoroutine(ShowSequence());
         StartCoroutine(Timer());
         audioSource = gameObject.AddComponent<AudioSource>();
+        gameInitialized = true;
     }
 
     /// <summary>
@@ -101,6 +104,7 @@ public class SequenceGameManager : MonoBehaviour
     /// </summary>
     private IEnumerator ShowSequence()
     {
+        isPerformingAction = true;
         sequence.Clear();
         List<int> indices = new List<int>();
 
@@ -128,6 +132,7 @@ public class SequenceGameManager : MonoBehaviour
         SetCardsInteractable(true);
         currentSequenceIndex = 0;
         message.text = "Repeat the sequence!";
+        isPerformingAction = false;
     }
 
     /// <summary>
@@ -196,6 +201,11 @@ public class SequenceGameManager : MonoBehaviour
     /// </summary>
     public void Restart()
     {
+        if(!gameInitialized)
+            StartGame();
+
+        if (isPerformingAction) return;
+
         timer = 0f;
         gameEnded = false;
         timeTaken.text = "";

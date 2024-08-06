@@ -7655,7 +7655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c19c8040d726e429a94f4c42b2e3c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfTimes: 4
+  numberOfTimes: 5
   countdownTime: 60
   frontPageObject: {fileID: 5156493022094543717}
   lastPageObject: {fileID: 1500760423}
@@ -7671,7 +7671,7 @@ MonoBehaviour:
   - {fileID: 923479177}
   - {fileID: 726348386}
   - {fileID: 2144919948}
-  verticalScroll: 1
+  verticalScroll: 0
 --- !u!114 &426458619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7686,6 +7686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseStreaming: 0
   duration: 60
+  timeleft: 0
   OnSetUpCompleted:
     m_PersistentCalls:
       m_Calls:
@@ -52589,17 +52590,17 @@ PrefabInstance:
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.197
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.03
       objectReference: {fileID: 0}
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.242
+      value: -0.17
       objectReference: {fileID: 0}
     - target: {fileID: 2514675399181695721, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
