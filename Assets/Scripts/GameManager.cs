@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour
         public string stageName;
         public List<GameObject> componentsToEnable;
         public List<GameObject> componentsToDisable;
+
+        public List<UnityEvent> eventsToInvoke;
     }
 
     public List<Stage> stages;
@@ -44,6 +47,12 @@ public class GameManager : MonoBehaviour
             }
 
             Debug.Log("Proceeding to stage: " + stages[currentStageIndex].stageName);
+
+            // Invoke events
+            foreach (var unityEvent in stages[currentStageIndex].eventsToInvoke)
+            {
+                unityEvent.Invoke();
+            }
 
             currentStageIndex++;
         }

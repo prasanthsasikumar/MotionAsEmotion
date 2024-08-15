@@ -5,10 +5,12 @@ using UnityEngine.Networking;
 
 public class SkyBoxFetcher : MonoBehaviour
 { 
+    public List<Texture2D> places;
     // Replace with your API endpoint URL
     string url = "https://backend.blockadelabs.com/api/v1/imagine/myRequests";
     // Replace with your API key
     public string apiKey = "";
+    private Texture2D retrievedTexture;
 
     void Start()
     {
@@ -72,6 +74,7 @@ public class SkyBoxFetcher : MonoBehaviour
                 {
                     // Get downloaded texture
                     Texture2D texture = DownloadHandlerTexture.GetContent(textureRequest);
+                    retrievedTexture = texture;
 
                     // Create a material for the skybox
                     Material skyboxMaterial = new Material(Shader.Find("Skybox/Panoramic"));
@@ -106,4 +109,23 @@ public class SkyBoxFetcher : MonoBehaviour
         public string file_url;
         // Add more fields as needed
     }
+
+    public void ApplyTextureToSkybox(int index)
+    {
+        // Create a material for the skybox
+        Material skyboxMaterial = new Material(Shader.Find("Skybox/Panoramic"));
+
+        // Set the texture to the skybox material
+        skyboxMaterial.SetTexture("_MainTex", places[index]);
+
+        // Apply the skybox material to the scene's skybox
+        RenderSettings.skybox = skyboxMaterial;
+        
+    }
+
+    public void ApplyRetrievedTextureToSkybox()
+    {
+        GetRequests();
+    }
+    
 }
