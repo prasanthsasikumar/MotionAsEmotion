@@ -61,4 +61,10 @@ public class GameManager : MonoBehaviour
             Debug.Log("All stages completed.");
         }
     }
+
+    //reload scene
+    public void RestartGame()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
 }

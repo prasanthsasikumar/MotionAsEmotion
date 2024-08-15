@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/ice.unity
-    guid: f05c283895d0d4e02bdf3e91a7a9e5ed
+    path: Assets/Scenes/gripDemo15thAug.unity
+    guid: 28541c8556f86461a873b088ec266e52
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: dcc0dd48bd3db2242b0ea4aa14b090ec,
       type: 2}

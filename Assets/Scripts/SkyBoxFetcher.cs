@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 public class SkyBoxFetcher : MonoBehaviour
 { 
     public List<Texture2D> places;
+    public List<Material> materials;
     // Replace with your API endpoint URL
     string url = "https://backend.blockadelabs.com/api/v1/imagine/myRequests";
     // Replace with your API key
@@ -123,9 +124,14 @@ public class SkyBoxFetcher : MonoBehaviour
         
     }
 
+    public void ApplyMaterialToSkybox(int index)
+    {
+        RenderSettings.skybox = materials[index];
+    }
+
     public void ApplyRetrievedTextureToSkybox()
     {
-        GetRequests();
+        StartCoroutine(GetRequests());
     }
     
 }

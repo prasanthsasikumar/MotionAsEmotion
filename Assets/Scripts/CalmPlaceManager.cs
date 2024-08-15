@@ -49,7 +49,8 @@ public class CalmPlaceManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             if (elapsedTime > duration * 0.1f)
             {
-                dialogueBox.SetActive(false);
+                if(dialogueBox)
+                    dialogueBox.SetActive(false);
             }
 
             float t = Mathf.Clamp01(elapsedTime / duration);
@@ -59,12 +60,18 @@ public class CalmPlaceManager : MonoBehaviour
         }
     }
 
+    public void StopChangingContrast()
+    {
+       StopAllCoroutines();
+    }
+
     public void ResetEffect()
     {
         elapsedTime = 0f;
         colorAdjustments.contrast.value = originalContrast;
         colorAdjustments.colorFilter.value = originalColorFilter;
-        dialogueBox.SetActive(true);
+        if (dialogueBox) 
+            dialogueBox.SetActive(true);
 
         if (audioSource.isPlaying)
         {
